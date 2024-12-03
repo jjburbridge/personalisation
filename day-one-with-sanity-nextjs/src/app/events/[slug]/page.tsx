@@ -1,20 +1,22 @@
-import { PortableText } from "@portabletext/react";
-import { SanityDocument } from "next-sanity";
+import { client } from "@/sanity/client";
+import { sanityFetch } from "@/sanity/live";
 import imageUrlBuilder from "@sanity/image-url";
-
 import { SanityImageSource } from "@sanity/image-url/lib/types/types";
-import { client, sanityFetch } from "@/sanity/client";
-import Link from "next/link";
+import { defineQuery, PortableText } from "next-sanity";
 import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
-const EVENT_QUERY = `*[
+const EVENT_QUERY = defineQuery(`*[
     _type == "event" &&
     slug.current == $slug
   ][0]{
   ...,
+  "date": coalesce(date, now()),
+  "doorsOpen": coalesce(doorsOpen, 0),
   headline->,
   venue->
-}`;
+}`);
 
 const { projectId, dataset } = client.config();
 const urlFor = (source: SanityImageSource) =>
@@ -25,12 +27,15 @@ const urlFor = (source: SanityImageSource) =>
 export default async function EventPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ id: string }>;
 }) {
-  const event = await sanityFetch<SanityDocument>({
+  const { data: event } = await sanityFetch({
     query: EVENT_QUERY,
-    params,
+    params: await params,
   });
+  if (!event) {
+    notFound();
+  }
   const {
     name,
     date,
@@ -48,7 +53,7 @@ export default async function EventPage({
   const eventDate = new Date(date).toDateString();
   const eventTime = new Date(date).toLocaleTimeString();
   const doorsOpenTime = new Date(
-    new Date(date).getTime() + doorsOpen * 60000
+    new Date(date).getTime() - doorsOpen * 60000
   ).toLocaleTimeString();
 
   return (
@@ -58,7 +63,7 @@ export default async function EventPage({
       </div>
       <div className="grid items-top gap-12 sm:grid-cols-2">
         <Image
-          src={eventImageUrl || "https://via.placeholder.com/550x310"}
+          src={eventImageUrl || "https://placehold.co/550x310/png"}
           alt={name || "Event"}
           className="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full"
           height="310"
