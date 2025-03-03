@@ -4,19 +4,20 @@ import {
   SchemaFormExample,
 } from "@/components/form";
 import { sanityFetch } from "@/sanity/live";
+import { FormDataProps } from "@sanity/form-toolkit";
 import { defineQuery } from "next-sanity";
 import Link from "next/link";
 
 import React from "react";
 
-const getForm = ({ variant, data }: { variant?: string; data: any }) => {
+const getForm = ({ variant, data }: { variant?: string; data: unknown }) => {
   if (variant === "hubspot") {
-    return <HubspotForm formId={data} />;
+    return <HubspotForm formId={data as string} />;
   }
   if (variant === "mailchimp") {
-    return <MailchimpForm url={data} />;
+    return <MailchimpForm url={data as string} />;
   }
-  return <SchemaFormExample formData={data} />;
+  return <SchemaFormExample formData={data as FormDataProps} />;
 };
 
 const ARTIST_QUERY =

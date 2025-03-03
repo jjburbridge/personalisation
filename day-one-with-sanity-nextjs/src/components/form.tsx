@@ -5,19 +5,20 @@ import { FC, FormEvent, useEffect, useState } from "react";
 
 interface UseStateExampleProps {
   formData: FormDataProps;
-  onSubmit?: (data: Record<string, any>) => void;
+  onSubmit?: (data: Record<string, unknown>) => void;
 }
 
 export const SchemaFormExample: FC<UseStateExampleProps> = ({
   formData,
   onSubmit = console.log,
 }) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [values, setValues] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, string | undefined>>({});
 
   const getFieldState = (fieldName: string) => ({
     value: values[fieldName],
-    onChange: (value: any) => {
+    onChange: (value: unknown) => {
       setValues((prev) => ({
         ...prev,
         [fieldName]: value,
