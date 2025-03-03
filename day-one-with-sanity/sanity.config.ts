@@ -40,6 +40,24 @@ export default defineConfig([
               },
             ],
           },
+          {
+            id: 'artist-form',
+            label: 'Artist Form',
+            variants: [
+              {
+                id: 'native',
+                label: 'Native',
+              },
+              {
+                id: 'hubspot',
+                label: 'Hubspot',
+              },
+              {
+                id: 'mailchimp',
+                label: 'mailchimp',
+              },
+            ],
+          },
         ],
       }),
       internationalizedArray({
@@ -92,6 +110,20 @@ export default defineConfig([
         //   experimentNameOverride: 'audience',
         //   // hardcoded experiments and variants
         experiments: [
+          {
+            id: 'event-name',
+            label: 'Event Name',
+            variants: [
+              {
+                id: 'control',
+                label: 'Control',
+              },
+              {
+                id: 'variant',
+                label: 'Variant',
+              },
+            ],
+          },
           {
             id: 'artist-form',
             label: 'Artist Form',
