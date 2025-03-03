@@ -4,16 +4,22 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build": "npm run data && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "data": "node ./src/sanity/dictonaryGenerate"
   },
   "dependencies": {
+    "@sanity/form-toolkit": "^1.2.0",
     "@sanity/image-url": "^1.1.0",
     "next": "15.0.3",
     "next-sanity": "^9.8.16",
     "react": "19.0.0-rc-66855b96-20241106",
-    "react-dom": "19.0.0-rc-66855b96-20241106"
+    "react-dom": "19.0.0-rc-66855b96-20241106",
+    "react-hubspot-form": "^1.3.7",
+    "sanity": "^3.77.2",
+    "styled-components": "^6.1.15",
+    "uuid": "^11.0.5"
   },
   "devDependencies": {
     "@types/node": "^20",

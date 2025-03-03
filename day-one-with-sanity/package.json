@@ -15,12 +15,16 @@
     "sanity"
   ],
   "dependencies": {
+    "@sanity/form-toolkit": "^1.2.0",
     "@sanity/icons": "^2.11.8",
+    "@sanity/personalization-plugin": "2.1.0",
     "@sanity/vision": "^3.40.0",
+    "fuse.js": "^7.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "sanity": "^3.40.0",
     "sanity-plugin-documents-pane": "^2.3.0",
+    "sanity-plugin-internationalized-array": "^3.1.1",
     "styled-components": "^6.1.8"
   },
   "devDependencies": {

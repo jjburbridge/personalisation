@@ -1,3 +1,5 @@
+import { getDeferredTrackingData, getExperimentValue } from "@/lib/experiments";
+import { Tracking } from "@/lib/tracking";
 import { client } from "@/sanity/client";
 import { sanityFetch } from "@/sanity/live";
 import imageUrlBuilder from "@sanity/image-url";
@@ -7,15 +9,26 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+const intString = (name: string) =>
+  `'${name}2': coalesce(${name}["langs"][_key == $lang][0].value, ${name}["langs"]["en"][0].value)`;
+
+const intTmp = (name: string) =>
+  `'${name}3': coalesce(${name}[$lang], ${name}["langs"][_key == $lang][0].value, ${name}["en"], ${name}["langs"]["en"][0].value)`;
+
 const EVENT_QUERY = defineQuery(`*[
     _type == "event" &&
     slug.current == $slug
   ][0]{
   ...,
+  "name": coalesce(newName.variants[experimentId == $experiment && variantId == $variant][0].value, newName.default, name),
   "date": coalesce(date, now()),
   "doorsOpen": coalesce(doorsOpen, 0),
   headline->,
-  venue->
+  venue->,
+  ${intString("intName")},
+  ${intTmp("intName")},
+  "intName": coalesce(intName[$lang], intName["langs"][_key == $lang][0].value, intName["en"], intName["langs"]["en"][0].value),
+  "lang": $lang
 }`);
 
 const { projectId, dataset } = client.config();
@@ -27,11 +40,24 @@ const urlFor = (source: SanityImageSource) =>
 export default async function EventPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }) {
+  const { slug } = await params;
+
+  const { variant } = await getExperimentValue("event-name");
+  const trackingData = await getDeferredTrackingData();
+  const lang = "no";
+
+  const queryParams = {
+    slug,
+    experiment: "event-name",
+    variant: variant?.id || "",
+    lang: lang as "no" | "en",
+  };
+
   const { data: event } = await sanityFetch({
     query: EVENT_QUERY,
-    params: await params,
+    params: queryParams,
   });
   if (!event) {
     notFound();
@@ -129,6 +155,12 @@ export default async function EventPage({
           )}
         </div>
       </div>
+      {trackingData && (
+        <Tracking
+          userGroup={trackingData.userGroup}
+          userId={trackingData.userId}
+        />
+      )}
     </main>
   );
 }

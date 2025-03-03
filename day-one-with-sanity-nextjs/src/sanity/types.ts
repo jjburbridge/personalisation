@@ -68,6 +68,23 @@ export type Geopoint = {
   alt?: number;
 };
 
+export type Strings = {
+  _id: string;
+  _type: "strings";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  strings?: Array<{
+    key?: string;
+    title?: string;
+    description?: string;
+    string?: Array<{
+      _key: string;
+    } & InternationalizedArrayStringValue>;
+    _key: string;
+  }>;
+};
+
 export type Event = {
   _id: string;
   _type: "event";
@@ -75,6 +92,15 @@ export type Event = {
   _updatedAt: string;
   _rev: string;
   name?: string;
+  newName?: ExperimentString;
+  fallbackName?: string;
+  intName?: {
+    en?: string;
+    no?: string;
+    langs?: Array<{
+      _key: string;
+    } & InternationalizedArrayStringValue>;
+  };
   slug?: Slug;
   eventType?: "in-person" | "virtual";
   date?: string;
@@ -187,6 +213,15 @@ export type Venue = {
   _updatedAt: string;
   _rev: string;
   name?: string;
+  strings?: Array<{
+    key?: string;
+    title?: string;
+    description?: string;
+    string?: Array<{
+      _key: string;
+    } & InternationalizedArrayStringValue>;
+    _key: string;
+  }>;
 };
 
 export type Slug = {
@@ -204,7 +239,33 @@ export type Artist = {
   name?: string;
 };
 
-export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | Event | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | Venue | Slug | Artist;
+export type InternationalizedArrayStringValue = {
+  _type: "internationalizedArrayStringValue";
+  value?: string;
+};
+
+export type InternationalizedArrayString = Array<{
+  _key: string;
+} & InternationalizedArrayStringValue>;
+
+export type ExperimentString = {
+  _type: "experimentString";
+  default?: string;
+  active?: boolean;
+  experimentId?: string;
+  variants?: Array<{
+    _key: string;
+  } & VariantString>;
+};
+
+export type VariantString = {
+  _type: "variantString";
+  variantId?: string;
+  experimentId?: string;
+  value?: string;
+};
+
+export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | Strings | Event | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata | Venue | Slug | Artist | InternationalizedArrayStringValue | InternationalizedArrayString | ExperimentString | VariantString;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ../day-one-with-sanity-nextjs/src/app/page.tsx
 // Variable: EVENTS_QUERY
@@ -218,14 +279,23 @@ export type EVENTS_QUERYResult = Array<{
 
 // Source: ../day-one-with-sanity-nextjs/src/app/events/[slug]/page.tsx
 // Variable: EVENT_QUERY
-// Query: *[    _type == "event" &&    slug.current == $slug  ][0]{  ...,  "date": coalesce(date, now()),  "doorsOpen": coalesce(doorsOpen, 0),  headline->,  venue->}
+// Query: *[    _type == "event" &&    slug.current == $slug  ][0]{  ...,  "name": coalesce(newName.variants[experimentId == $experiment && variantId == $variant][0].value, newName.default, name),  "date": coalesce(date, now()),  "doorsOpen": coalesce(doorsOpen, 0),  headline->,  venue->,  'intName2': coalesce(intName["langs"][_key == $lang][0].value, intName["langs"]["en"][0].value),  'intName3': coalesce(intName[$lang], intName["langs"][_key == $lang][0].value, intName["en"], intName["langs"]["en"][0].value),  "intName": coalesce(intName[$lang], intName["langs"][_key == $lang][0].value, intName["en"], intName["langs"]["en"][0].value),  "lang": $lang}
 export type EVENT_QUERYResult = {
   _id: string;
   _type: "event";
   _createdAt: string;
   _updatedAt: string;
   _rev: string;
-  name?: string;
+  name: string | null;
+  newName?: ExperimentString;
+  fallbackName?: string;
+  intName: Array<{
+    en?: string;
+    no?: string;
+    langs?: Array<{
+      _key: string;
+    } & InternationalizedArrayStringValue>;
+  }> | string | null;
   slug?: Slug;
   eventType?: "in-person" | "virtual";
   date: string;
@@ -237,6 +307,15 @@ export type EVENT_QUERYResult = {
     _updatedAt: string;
     _rev: string;
     name?: string;
+    strings?: Array<{
+      key?: string;
+      title?: string;
+      description?: string;
+      string?: Array<{
+        _key: string;
+      } & InternationalizedArrayStringValue>;
+      _key: string;
+    }>;
   } | null;
   headline: {
     _id: string;
@@ -276,6 +355,15 @@ export type EVENT_QUERYResult = {
     _key: string;
   }>;
   tickets?: string;
+  intName2: string | null;
+  intName3: Array<{
+    en?: string;
+    no?: string;
+    langs?: Array<{
+      _key: string;
+    } & InternationalizedArrayStringValue>;
+  }> | string | null;
+  lang: unknown;
 } | null;
 
 // Query TypeMap
@@ -283,6 +371,6 @@ import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
     "*[\n  _type == \"event\"\n  && defined(slug.current)\n]{_id, name, slug, date}|order(date desc)": EVENTS_QUERYResult;
-    "*[\n    _type == \"event\" &&\n    slug.current == $slug\n  ][0]{\n  ...,\n  \"date\": coalesce(date, now()),\n  \"doorsOpen\": coalesce(doorsOpen, 0),\n  headline->,\n  venue->\n}": EVENT_QUERYResult;
+    "*[\n    _type == \"event\" &&\n    slug.current == $slug\n  ][0]{\n  ...,\n  \"name\": coalesce(newName.variants[experimentId == $experiment && variantId == $variant][0].value, newName.default, name),\n  \"date\": coalesce(date, now()),\n  \"doorsOpen\": coalesce(doorsOpen, 0),\n  headline->,\n  venue->,\n  'intName2': coalesce(intName[\"langs\"][_key == $lang][0].value, intName[\"langs\"][\"en\"][0].value),\n  'intName3': coalesce(intName[$lang], intName[\"langs\"][_key == $lang][0].value, intName[\"en\"], intName[\"langs\"][\"en\"][0].value),\n  \"intName\": coalesce(intName[$lang], intName[\"langs\"][_key == $lang][0].value, intName[\"en\"], intName[\"langs\"][\"en\"][0].value),\n  \"lang\": $lang\n}": EVENT_QUERYResult;
   }
 }

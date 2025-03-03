@@ -1,6 +1,7 @@
 import {CalendarIcon} from '@sanity/icons'
 import {defineField, defineType} from 'sanity'
-import { DoorsOpenInput } from './components/DoorsOpenInput'
+import {DoorsOpenInput} from './components/DoorsOpenInput'
+import {Fallback} from './components/fallback'
 
 export const eventType = defineType({
   name: 'event',
@@ -15,15 +16,58 @@ export const eventType = defineType({
     defineField({
       name: 'name',
       type: 'string',
-      group: ['editorial', 'details']
+      group: ['editorial', 'details'],
     }),
+    defineField({
+      name: 'newName',
+      type: 'experimentString',
+      group: ['editorial', 'details'],
+    }),
+    defineField({
+      name: 'fallbackName',
+      type: 'string',
+      components: {
+        input: Fallback,
+      },
+    }),
+    defineField({
+      name: 'intName',
+      type: 'object',
+      fields: [
+        {name: 'en', type: 'string'},
+        {name: 'no', type: 'string'},
+        {name: 'langs', type: 'internationalizedArrayString'},
+      ],
+    }),
+    defineField({
+      name: 'text',
+      type: 'textBlock',
+    }),
+    defineField({
+      name: 'intText',
+      type: 'internationalizedArrayTextBlock',
+    }),
+    // defineField({
+    //   name: 'blah',
+    //   type: 'object',
+    //   fields: [
+    //     {name: 'en', type: 'string'},
+    //     {name: 'no', type: 'string'},
+    //     {name: 'langs', type: 'internationalizedArrayString'},
+    //   ],
+    // }),
+    // defineField({
+    //   name: 'personalName',
+    //   type: 'personalisationString',
+    //   group: ['editorial', 'details'],
+    // }),
     defineField({
       name: 'slug',
       type: 'slug',
       options: {source: 'name'},
       validation: (rule) => rule.required().error(`Required to generate a page on the website`),
       hidden: ({document}) => !document?.name,
-      group: 'details'
+      group: 'details',
     }),
     defineField({
       name: 'eventType',
@@ -32,12 +76,12 @@ export const eventType = defineType({
         list: ['in-person', 'virtual'],
         layout: 'radio',
       },
-      group: 'details'
+      group: 'details',
     }),
     defineField({
       name: 'date',
       type: 'datetime',
-      group: 'details'
+      group: 'details',
     }),
     defineField({
       name: 'doorsOpen',
@@ -45,7 +89,7 @@ export const eventType = defineType({
       type: 'number',
       initialValue: 60,
       group: 'details',
-      components: { input: DoorsOpenInput }
+      components: {input: DoorsOpenInput},
     }),
     defineField({
       name: 'venue',
@@ -60,29 +104,29 @@ export const eventType = defineType({
 
           return true
         }),
-        group: 'details'
+      group: 'details',
     }),
     defineField({
       name: 'headline',
       type: 'reference',
       to: [{type: 'artist'}],
-      group: 'details'
+      group: 'details',
     }),
     defineField({
       name: 'image',
       type: 'image',
-      group: 'editorial'
+      group: 'editorial',
     }),
     defineField({
       name: 'details',
       type: 'array',
       of: [{type: 'block'}],
-      group: 'editorial'
+      group: 'editorial',
     }),
     defineField({
       name: 'tickets',
       type: 'url',
-      group: 'details'
+      group: 'details',
     }),
   ],
   preview: {
@@ -104,7 +148,7 @@ export const eventType = defineType({
             minute: 'numeric',
           })
         : 'No date'
-  
+
       return {
         title: artist ? `${nameFormatted} (${artist})` : nameFormatted,
         subtitle: venue ? `${dateFormatted} at ${venue}` : dateFormatted,
