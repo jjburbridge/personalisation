@@ -3,22 +3,23 @@ import {
   MailchimpForm,
   SchemaFormExample,
 } from "@/components/form";
-import { getDeferredTrackingData, getExperimentValue } from "@/lib/experiments";
+import { getExperimentValue } from "@/lib/experiments";
 import { sanityFetch } from "@/sanity/live";
+import { FormDataProps } from "@sanity/form-toolkit";
 import { defineQuery } from "next-sanity";
 import Link from "next/link";
 
-import React, { type FC } from "react";
+import React from "react";
 
-const getForm = ({ variant, data }: { variant?: string; data: any }) => {
+const getForm = ({ variant, data }: { variant?: string; data: unknown }) => {
   if (variant === "hubspot") {
-    return <HubspotForm formId={data} />;
+    return <HubspotForm formId={data as string} />;
   }
   if (variant === "mailchimp") {
-    return <MailchimpForm url={data} />;
+    return <MailchimpForm url={data as string} />;
   }
   if (variant === "native") {
-    return <SchemaFormExample formData={data} />;
+    return <SchemaFormExample formData={data as FormDataProps} />;
   }
 };
 
@@ -38,7 +39,6 @@ const FORM_QUERY = defineQuery(`*[_type == "personalForm" && _id == $id][0]{
 
 export default async function EventPage() {
   const { variant } = await getExperimentValue("artist-form");
-  const trackingData = await getDeferredTrackingData();
 
   const queryParams = {
     experimentId: "artist-form",
