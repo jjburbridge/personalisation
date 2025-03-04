@@ -11,7 +11,7 @@ import {internationalizedArray} from 'sanity-plugin-internationalized-array'
 export default defineConfig([
   {
     name: 'experiments',
-    title: 'Day one with Sanity(Experiments)',
+    title: 'Day one with Sanity',
     basePath: '/experiments',
     projectId: 'ikcwiihw',
     dataset: 'production',
@@ -96,7 +96,7 @@ export default defineConfig([
   },
   {
     name: 'personalisation',
-    title: 'Day one with Sanity(Personalisation)',
+    title: 'Day one with Sanity(Forms)',
     basePath: '/personalisation',
     projectId: 'ikcwiihw',
     dataset: 'production',

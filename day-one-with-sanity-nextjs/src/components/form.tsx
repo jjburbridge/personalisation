@@ -98,6 +98,7 @@ export const HubspotForm = (props: { formId: string }) => {
 };
 
 export const MailchimpForm = ({ url }: { url: string }) => {
+  const secureUrl = url.replace("http://", "https://");
   return (
     <div style={{ position: "relative", paddingTop: "56.25%" }}>
       <iframe
@@ -110,7 +111,7 @@ export const MailchimpForm = ({ url }: { url: string }) => {
           left: 0,
           height: "110%",
         }}
-        src={url}
+        src={secureUrl}
       />
     </div>
   );
