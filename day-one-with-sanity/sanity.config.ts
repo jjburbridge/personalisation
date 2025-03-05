@@ -105,7 +105,7 @@ export default defineConfig([
       structureTool(),
       visionTool(),
       fieldLevelExperiments({
-        fields: ['formFields'],
+        fields: ['formFields', 'growthbookPath'],
         //   variantNameOverride: 'segment',
         //   experimentNameOverride: 'audience',
         //   // hardcoded experiments and variants

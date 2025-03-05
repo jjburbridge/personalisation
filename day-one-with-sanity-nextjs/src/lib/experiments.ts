@@ -61,6 +61,24 @@ export const getExperimentValue = async (experimentName: string) => {
   };
 };
 
+export const getExperimentValueFromResponse = async (
+  experimentName: string,
+  response: NextResponse
+) => {
+  const { cookies } = response;
+  console.log("getExperimentValueFromResponse cookies", cookies);
+  const testCookie = cookies.get("ab-test")?.value;
+  const userGroups = testCookie ? JSON.parse(testCookie).userGroups : undefined;
+
+  console.log("userGroups", userGroups);
+
+  return {
+    variant: EXPERIMENTS[experimentName].variants.find(
+      (variant) => variant.id === userGroups[experimentName]
+    ),
+  };
+};
+
 export const setCookiesValue = (
   request: NextRequest,
   response: NextResponse
@@ -90,6 +108,19 @@ export const setCookiesValue = (
   }
 
   return response;
+};
+
+export const setCookiesValueFromResponse = (
+  response: NextResponse,
+  rewrite: NextResponse
+) => {
+  const { cookies } = response;
+  console.log("setCookiesValueFromResponse cookies", cookies);
+  const testCookie = cookies.get("ab-test")?.value;
+  if (testCookie) {
+    rewrite.cookies.set("ab-test", testCookie);
+  }
+  return rewrite;
 };
 
 // If use is part of any experiments, get the tracking call data
