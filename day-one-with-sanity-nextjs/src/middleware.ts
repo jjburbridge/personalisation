@@ -22,7 +22,7 @@ export async function middleware(request: NextRequest) {
   }
   let response = NextResponse.next();
 
-  let cookie = request.cookies.get("ab-test")?.value;
+  const cookie = request.cookies.get("ab-test")?.value;
   let variant;
   if (!cookie) {
     response = setCookiesValue(request, response);
