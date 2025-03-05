@@ -3,7 +3,7 @@
 import { FC } from "react";
 
 export const CookieBanner: FC = () => {
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.MouseEvent) => {
     e.preventDefault();
     // Remove cookies
     document.cookie =
