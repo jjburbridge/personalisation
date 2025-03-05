@@ -133,6 +133,41 @@ export const experimentSettings = defineType({
   },
 })
 
+const variant = defineType({
+  name: 'variant',
+  type: 'object',
+  fields: [
+    defineField({
+      name: 'id',
+      type: 'string',
+    }),
+    defineField({
+      name: 'label',
+      type: 'string',
+    }),
+  ],
+})
+
+const experiments = defineType({
+  name: 'experiments',
+  type: 'document',
+  fields: [
+    defineField({
+      name: 'id',
+      type: 'string',
+    }),
+    defineField({
+      name: 'label',
+      type: 'string',
+    }),
+    defineField({
+      name: 'variants',
+      type: 'array',
+      of: [{type: 'variant'}],
+    }),
+  ],
+})
+
 export const eventSchemaTypes = [
   artistType,
   eventType,
@@ -142,4 +177,11 @@ export const eventSchemaTypes = [
   // form,
   formFields,
 ]
-export const formSchemaType = [form, formFields, experimentSettings, growthbookVariant]
+export const formSchemaType = [
+  form,
+  formFields,
+  experimentSettings,
+  growthbookVariant,
+  experiments,
+  variant,
+]

@@ -1,4 +1,4 @@
-import {defineConfig} from 'sanity'
+import {defineConfig, SanityClient} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
 import {formSchemaType, eventSchemaTypes} from './schemaTypes'
@@ -7,6 +7,11 @@ import {defaultDocumentNode} from './structure/defaultDocumentNode'
 import {fieldLevelExperiments /* fieldLevelPersonalisation */} from '@sanity/personalization-plugin'
 import {hubSpotInput, mailchimpInput, formSchema} from '@sanity/form-toolkit'
 import {internationalizedArray} from 'sanity-plugin-internationalized-array'
+
+const getExperiments = async (client: SanityClient) => {
+  const experiments = await client.fetch('*[_type == "experiments"]')
+  return experiments
+}
 
 export default defineConfig([
   {
@@ -109,40 +114,41 @@ export default defineConfig([
         //   variantNameOverride: 'segment',
         //   experimentNameOverride: 'audience',
         //   // hardcoded experiments and variants
-        experiments: [
-          {
-            id: 'event-name',
-            label: 'Event Name',
-            variants: [
-              {
-                id: 'control',
-                label: 'Control',
-              },
-              {
-                id: 'variant',
-                label: 'Variant',
-              },
-            ],
-          },
-          {
-            id: 'artist-form',
-            label: 'Artist Form',
-            variants: [
-              {
-                id: 'native',
-                label: 'Native',
-              },
-              {
-                id: 'hubspot',
-                label: 'Hubspot',
-              },
-              {
-                id: 'mailchimp',
-                label: 'mailchimp',
-              },
-            ],
-          },
-        ],
+        experiments: getExperiments,
+        // experiments: [
+        //   {
+        //     id: 'event-name',
+        //     label: 'Event Name',
+        //     variants: [
+        //       {
+        //         id: 'control',
+        //         label: 'Control',
+        //       },
+        //       {
+        //         id: 'variant',
+        //         label: 'Variant',
+        //       },
+        //     ],
+        //   },
+        //   {
+        //     id: 'artist-form',
+        //     label: 'Artist Form',
+        //     variants: [
+        //       {
+        //         id: 'native',
+        //         label: 'Native',
+        //       },
+        //       {
+        //         id: 'hubspot',
+        //         label: 'Hubspot',
+        //       },
+        //       {
+        //         id: 'mailchimp',
+        //         label: 'mailchimp',
+        //       },
+        //     ],
+        //   },
+        // ],
       }),
       //     internationalizedArray({
       //       languages: [
