@@ -5,7 +5,7 @@ import {
 } from "@/components/form";
 import { getExperimentValue } from "@/lib/experiments";
 import { sanityFetch } from "@/sanity/live";
-import { FormDataProps } from "@sanity/form-toolkit";
+import { FormDataProps } from "@sanity/form-toolkit/form-schema";
 import { defineQuery } from "next-sanity";
 import Link from "next/link";
 
@@ -18,30 +18,27 @@ const getForm = ({ variant, data }: { variant?: string; data: unknown }) => {
   if (variant === "mailchimp") {
     return <MailchimpForm url={data as string} />;
   }
-  if (variant === "native") {
-    return <SchemaFormExample formData={data as FormDataProps} />;
-  }
+  return <SchemaFormExample formData={data as FormDataProps} />;
 };
 
 const FORM_QUERY = defineQuery(`*[_type == "personalForm" && _id == $id][0]{
   "default": {
-    ...form.default,
-    "native": form.default.native->,
-      },
-    "variants":form.variants[experimentId == $experimentId && variantId == $variantId] {
-        ...,
-        "value": coalesce(value.native->, value.mailchimp, value.hubspot)
-      },
+    "value": form.default.native->,
+  },
+  "variants":form.variants[experimentId == $experimentId && variantId == $variantId] {
+    ...,
+    "value": coalesce(value.native->, value.mailchimp, value.hubspot)
+  },
 }{
   ...,
   "form": coalesce(variants[0],default)
 }`);
 
 export default async function EventPage() {
-  const { variant } = await getExperimentValue("artist-form");
+  const { variant } = await getExperimentValue("form-length");
 
   const queryParams = {
-    experimentId: "artist-form",
+    experimentId: "form-length",
     variantId: variant?.id || "",
     id: "894ec2c6-e4ff-4a0a-93b2-b8367695a8b9", // hardcoded id but would probable be stored in config
   };
@@ -49,12 +46,13 @@ export default async function EventPage() {
     query: FORM_QUERY,
     params: queryParams,
   });
+  console.log(data);
   return (
     <main className="container mx-auto grid gap-12 p-12">
       <div className="mb-4">
         <Link href="/">← Back to events</Link>
       </div>
-      <h4 className="text-2xl font-bold">{variant?.id} Form</h4>
+      <h4 className="text-2xl font-bold">{variant?.id} form</h4>
       {getForm({ variant: variant?.id, data: data.form.value })}
     </main>
   );

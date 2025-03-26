@@ -26,10 +26,10 @@ export async function middleware(request: NextRequest) {
   let variant;
   if (!cookie) {
     response = setCookiesValue(request, response);
-    const data = await getExperimentValueFromResponse("event-name", response);
+    const data = await getExperimentValueFromResponse("homepage", response);
     variant = data.variant;
   } else {
-    const data = await getExperimentValue("event-name");
+    const data = await getExperimentValue("homepage");
     variant = data.variant;
   }
   const path = request.nextUrl.pathname;
@@ -37,7 +37,7 @@ export async function middleware(request: NextRequest) {
 
   const queryParams = {
     path,
-    experimentId: "event-name",
+    experimentId: "homepage",
     variantId: variant?.id || "",
   };
 

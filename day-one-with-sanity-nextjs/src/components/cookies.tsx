@@ -8,6 +8,7 @@ export const CookieBanner: FC = () => {
     // Remove cookies
     document.cookie =
       "ab-test=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+    document.location.reload();
   };
   return (
     <div>

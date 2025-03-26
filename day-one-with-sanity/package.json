@@ -15,9 +15,11 @@
     "sanity"
   ],
   "dependencies": {
+    "@sanity/assist": "^3.2.0",
     "@sanity/form-toolkit": "^1.2.0",
     "@sanity/icons": "^2.11.8",
-    "@sanity/personalization-plugin": "2.1.0",
+    "@sanity/personalization-plugin": "2.2.0-launch-darkly.1",
+    "@sanity/ui": "^2.15.7",
     "@sanity/vision": "^3.40.0",
     "fuse.js": "^7.0.0",
     "react": "^18.2.0",
@@ -25,6 +27,7 @@
     "sanity": "^3.40.0",
     "sanity-plugin-documents-pane": "^2.3.0",
     "sanity-plugin-internationalized-array": "^3.1.1",
+    "sanity-plugin-workflow": "^1.0.4",
     "styled-components": "^6.1.8"
   },
   "devDependencies": {

@@ -1,16 +1,24 @@
 import {defineConfig, SanityClient} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
-import {formSchemaType, eventSchemaTypes} from './schemaTypes'
-import {structure} from './structure'
+import {formSchemaType, eventSchemaTypes, articleSchemaTypes} from './schemaTypes'
+import {allStructure, structure, templatesByType} from './structure'
 import {defaultDocumentNode} from './structure/defaultDocumentNode'
-import {fieldLevelExperiments /* fieldLevelPersonalisation */} from '@sanity/personalization-plugin'
+import {fieldLevelExperiments, launchDarklyFieldLevel} from '@sanity/personalization-plugin'
 import {hubSpotInput, mailchimpInput, formSchema} from '@sanity/form-toolkit'
 import {internationalizedArray} from 'sanity-plugin-internationalized-array'
+import {assist} from '@sanity/assist'
+import {workflow} from 'sanity-plugin-workflow'
 
 const getExperiments = async (client: SanityClient) => {
   const experiments = await client.fetch('*[_type == "experiments"]')
   return experiments
+}
+
+const templates = () => {
+  return formSchemaType.map((type) => {
+    return templatesByType(type)
+  })
 }
 
 export default defineConfig([
@@ -107,7 +115,9 @@ export default defineConfig([
     dataset: 'production',
 
     plugins: [
-      structureTool(),
+      structureTool(/* {
+        structure: allStructure,
+      } */),
       visionTool(),
       fieldLevelExperiments({
         fields: ['formFields', 'growthbookPath'],
@@ -150,14 +160,14 @@ export default defineConfig([
         //   },
         // ],
       }),
-      //     internationalizedArray({
-      //       languages: [
-      //         {id: 'en', title: 'English'},
-      //         {id: 'no', title: 'Norwegian'},
-      //       ],
-      //       defaultLanguages: ['en'],
-      //       fieldTypes: ['string', 'textBlock'],
-      //     }),
+      // //     internationalizedArray({
+      // //       languages: [
+      // //         {id: 'en', title: 'English'},
+      // //         {id: 'no', title: 'Norwegian'},
+      // //       ],
+      // //       defaultLanguages: ['en'],
+      // //       fieldTypes: ['string', 'textBlock'],
+      // //     }),
       hubSpotInput({
         url: 'https://async-list-test-studio.sanity.dev/api/hubspot',
       }),
@@ -182,6 +192,54 @@ export default defineConfig([
 
     schema: {
       types: formSchemaType,
+      // templates,
+    },
+  },
+
+  {
+    name: 'Launch',
+    title: 'Day one with Sanity(Launch)',
+    basePath: '/Launch',
+    projectId: 'ikcwiihw',
+    dataset: 'production',
+
+    plugins: [
+      structureTool(),
+      visionTool(),
+      launchDarklyFieldLevel({
+        // environment: 'production',
+        projectKey: 'default',
+        fields: ['string', 'image'],
+      }),
+      // LaunchFieldLevel({
+      //   environment: 'production',
+      //   fields: ['formFields', 'growthbookPath'],
+      // }),
+      assist(),
+      // hubSpotInput({
+      //   url: 'https://async-list-test-studio.sanity.dev/api/hubspot',
+      // }),
+      // mailchimpInput({
+      //   url: 'https://async-list-test-studio.sanity.dev/api/mailchimp',
+      // }),
+      // formSchema(),
+      //     // fieldLevelPersonalisation({
+      //     //   fields: ['string'],
+      //     //   variants: [
+      //     //     {
+      //     //       id: 'guest',
+      //     //       label: 'Guest',
+      //     //     },
+      //     //     {
+      //     //       id: 'member',
+      //     //       label: 'Member',
+      //     //     },
+      //     //   ],
+      //     // }),
+    ],
+
+    schema: {
+      types: articleSchemaTypes,
     },
   },
 ])

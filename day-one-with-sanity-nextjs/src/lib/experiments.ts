@@ -1,13 +1,29 @@
 import { v4 } from "uuid";
 import { cookies } from "next/headers";
 import type { NextRequest, NextResponse } from "next/server";
+import { client } from "@/sanity/client";
 
 type Experiment = Record<
   string,
   { label: string; variants: { id: string; label: string }[] }
 >;
 
-const EXPERIMENTS: Experiment = {
+const getExperiments = async () => {
+  let mappedExperiments: Experiment = {};
+  const experiments = await client.fetch('*[_type == "experiments"]');
+  experiments.map((experiment: any) => {
+    mappedExperiments[experiment.id] = {
+      label: experiment.label,
+      variants: experiment.variants.map((variant: any) => ({
+        id: variant.id,
+        label: variant.label,
+      })),
+    };
+  });
+  return mappedExperiments;
+};
+
+const EXPERIMENTS: Experiment = await getExperiments(); /* {
   "event-name": {
     label: "Event Name",
     variants: [
@@ -38,7 +54,7 @@ const EXPERIMENTS: Experiment = {
       },
     ],
   },
-};
+}; */
 
 const getTestCookie = async () => {
   const cookieStore = await cookies();
@@ -48,6 +64,11 @@ const getTestCookie = async () => {
 export const getUserGroup = async () => {
   const testCookie = await getTestCookie();
   return testCookie ? JSON.parse(testCookie)?.userGroups : undefined;
+};
+
+export const getUserId = async () => {
+  const testCookie = await getTestCookie();
+  return testCookie ? JSON.parse(testCookie)?.userId : undefined;
 };
 
 // mocking a fetch to an external service for getting an experiment variant
@@ -66,11 +87,8 @@ export const getExperimentValueFromResponse = async (
   response: NextResponse
 ) => {
   const { cookies } = response;
-  console.log("getExperimentValueFromResponse cookies", cookies);
   const testCookie = cookies.get("ab-test")?.value;
   const userGroups = testCookie ? JSON.parse(testCookie).userGroups : undefined;
-
-  console.log("userGroups", userGroups);
 
   return {
     variant: EXPERIMENTS[experimentName].variants.find(
