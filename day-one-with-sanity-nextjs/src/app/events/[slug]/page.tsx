@@ -9,12 +9,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-const intString = (name: string) =>
-  `'${name}2': coalesce(${name}["langs"][_key == $lang][0].value, ${name}["langs"]["en"][0].value)`;
-
-const intTmp = (name: string) =>
-  `'${name}3': coalesce(${name}[$lang], ${name}["langs"][_key == $lang][0].value, ${name}["en"], ${name}["langs"]["en"][0].value)`;
-
 const EVENT_QUERY = defineQuery(`*[
     _type == "event" &&
     slug.current == $slug
@@ -25,10 +19,7 @@ const EVENT_QUERY = defineQuery(`*[
   "doorsOpen": coalesce(doorsOpen, 0),
   headline->,
   venue->,
-  ${intString("intName")},
-  ${intTmp("intName")},
-  "intName": coalesce(intName[$lang], intName["langs"][_key == $lang][0].value, intName["en"], intName["langs"]["en"][0].value),
-  "lang": $lang
+  
 }`);
 
 const { projectId, dataset } = client.config();
@@ -46,13 +37,11 @@ export default async function EventPage({
 
   const { variant } = await getExperimentValue("event-name");
   const trackingData = await getDeferredTrackingData();
-  const lang = "no";
 
   const queryParams = {
     slug,
     experiment: "event-name",
     variant: variant?.id || "",
-    lang: lang as "no" | "en",
   };
 
   const { data: event } = await sanityFetch({

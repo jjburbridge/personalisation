@@ -4,7 +4,7 @@ import {
   SchemaFormExample,
 } from "@/components/form";
 import { sanityFetch } from "@/sanity/live";
-import { FormDataProps } from "@sanity/form-toolkit";
+import { FormDataProps } from "@sanity/form-toolkit/form-schema";
 import { defineQuery } from "next-sanity";
 import Link from "next/link";
 

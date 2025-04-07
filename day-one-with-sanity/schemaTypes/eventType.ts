@@ -20,47 +20,10 @@ export const eventType = defineType({
     }),
     defineField({
       name: 'newName',
+      title: 'Name for A/B Test',
       type: 'experimentString',
       group: ['editorial', 'details'],
     }),
-    defineField({
-      name: 'fallbackName',
-      type: 'string',
-      components: {
-        input: Fallback,
-      },
-    }),
-    defineField({
-      name: 'intName',
-      type: 'object',
-      fields: [
-        {name: 'en', type: 'string'},
-        {name: 'no', type: 'string'},
-        {name: 'langs', type: 'internationalizedArrayString'},
-      ],
-    }),
-    defineField({
-      name: 'text',
-      type: 'textBlock',
-    }),
-    defineField({
-      name: 'intText',
-      type: 'internationalizedArrayTextBlock',
-    }),
-    // defineField({
-    //   name: 'blah',
-    //   type: 'object',
-    //   fields: [
-    //     {name: 'en', type: 'string'},
-    //     {name: 'no', type: 'string'},
-    //     {name: 'langs', type: 'internationalizedArrayString'},
-    //   ],
-    // }),
-    // defineField({
-    //   name: 'personalName',
-    //   type: 'personalisationString',
-    //   group: ['editorial', 'details'],
-    // }),
     defineField({
       name: 'slug',
       type: 'slug',

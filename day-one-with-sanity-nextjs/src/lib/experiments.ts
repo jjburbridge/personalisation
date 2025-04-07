@@ -9,7 +9,7 @@ type Experiment = Record<
 >;
 
 const getExperiments = async () => {
-  let mappedExperiments: Experiment = {};
+  const mappedExperiments: Experiment = {};
   const experiments = await client.fetch('*[_type == "experiments"]');
   experiments.map((experiment: any) => {
     mappedExperiments[experiment.id] = {
@@ -23,38 +23,7 @@ const getExperiments = async () => {
   return mappedExperiments;
 };
 
-const EXPERIMENTS: Experiment = await getExperiments(); /* {
-  "event-name": {
-    label: "Event Name",
-    variants: [
-      {
-        id: "control",
-        label: "Control",
-      },
-      {
-        id: "variant",
-        label: "Variant",
-      },
-    ],
-  },
-  "artist-form": {
-    label: "Artist Form",
-    variants: [
-      {
-        id: "native",
-        label: "Native",
-      },
-      {
-        id: "hubspot",
-        label: "Hubspot",
-      },
-      {
-        id: "mailchimp",
-        label: "mailchimp",
-      },
-    ],
-  },
-}; */
+const EXPERIMENTS: Experiment = await getExperiments();
 
 const getTestCookie = async () => {
   const cookieStore = await cookies();
@@ -74,7 +43,6 @@ export const getUserId = async () => {
 // mocking a fetch to an external service for getting an experiment variant
 export const getExperimentValue = async (experimentName: string) => {
   const userGroups = await getUserGroup();
-
   return {
     variant: EXPERIMENTS[experimentName].variants.find(
       (variant) => variant.id === userGroups[experimentName]
@@ -111,14 +79,6 @@ export const setCookiesValue = (
       const variantIndex = Math.floor(random * variantsCount);
       userGroups[key] = EXPERIMENTS[key].variants[variantIndex].id;
     });
-    // const eventGroup = random > 0.5 ? "control" : "variant";
-    // let formGroup = "mailchimp";
-    // if (random > 0.33333) {
-    //   formGroup = "native";
-    // }
-    // if (random > 0.66666) {
-    //   formGroup = "hubspot";
-    // }
 
     const userId = v4();
     // Setting cookies on the response using the `ResponseCookies` API

@@ -10,10 +10,10 @@ import { defineQuery } from "next-sanity";
 import { client } from "./sanity/client";
 
 const ROUTING_QUERY = defineQuery(`*[
-  _type == "growthbookSettings" &&
-  growthExperiment.default == $path
+  _type == "routing" &&
+  pathExperiment.default == $path
 ][0]{
-  "route": coalesce(growthExperiment.variants[experimentId == $experimentId && variantId == $variantId][0].value, growthExperiment.default)
+  "route": coalesce(pathExperiment.variants[experimentId == $experimentId && variantId == $variantId][0].value, pathExperiment.default)
 }`);
 
 export async function middleware(request: NextRequest) {
@@ -33,7 +33,6 @@ export async function middleware(request: NextRequest) {
     variant = data.variant;
   }
   const path = request.nextUrl.pathname;
-  console.log("Middleware path", path);
 
   const queryParams = {
     path,
@@ -42,7 +41,6 @@ export async function middleware(request: NextRequest) {
   };
 
   const data = await client.fetch(ROUTING_QUERY, queryParams);
-  console.log("Middleware data", data, queryParams);
   if (data?.route) {
     const url = request.nextUrl.clone();
     url.pathname = data.route;

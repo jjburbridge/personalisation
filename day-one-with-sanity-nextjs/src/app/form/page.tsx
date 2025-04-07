@@ -46,7 +46,6 @@ export default async function EventPage() {
     query: FORM_QUERY,
     params: queryParams,
   });
-  console.log(data);
   return (
     <main className="container mx-auto grid gap-12 p-12">
       <div className="mb-4">

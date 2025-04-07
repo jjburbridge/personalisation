@@ -6,10 +6,10 @@ import { defineQuery, PortableText } from "next-sanity";
 import Link from "next/link";
 
 const LD_QUERY = defineQuery(`*[
-  _type == "Article"
+  _type == "article"
 ][0]{
 ...,
-"FeatureImage": coalesce(FeatureImage.variants[experimentId == $experiment && variantId == $variant][0].value, FeatureImage.default),
+"featureImage": coalesce(featureImage.variants[experimentId == $experiment && variantId == $variant][0].value, featureImage.default),
 }`);
 
 export default async function LD() {
@@ -23,6 +23,8 @@ export default async function LD() {
   };
 
   const variation = await getVariation("image", context, "control");
+  const otherVariation = await getVariation("other", context, true);
+  console.log("otherVariation", otherVariation);
 
   const { data } = await sanityFetch({
     query: LD_QUERY,
@@ -32,15 +34,17 @@ export default async function LD() {
     },
   });
 
+  console.log(data);
+
   return (
     <main className="container mx-auto grid gap-12 p-12">
       <div className="mb-4">
         <Link href="/">← Back to events</Link>
       </div>
-      <h2 className="text-xl font-bold">{data.Title}</h2>
-      <img width={400} src={urlFor(data.FeatureImage).url()} />
+      <h2 className="text-xl font-bold">{data.title}</h2>
+      <img width={400} src={urlFor(data.featureImage).url()} />
       <h6>{data.description}</h6>
-      <PortableText value={data.Content} />
+      <PortableText value={data.content} />
     </main>
   );
 }

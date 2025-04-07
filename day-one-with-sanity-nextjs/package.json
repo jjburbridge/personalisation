@@ -4,10 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "npm run data && next build",
+    "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "data": "node ./src/sanity/dictonaryGenerate"
+    "lint": "next lint"
   },
   "dependencies": {
     "@launchdarkly/node-server-sdk": "^9.7.4",
