@@ -1,3 +1,3 @@
 # Sanity Learn Example Code
 
-Code created when completing courses on [Sanity Learn](https://www.sanity.io/learn).
+Extended code based on completing courses on Sanity Learn and working with @sanity/personalization-plugin plugin.
